@@ -1,0 +1,97 @@
+{% extends "blog/base.html" %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+  <article class="media content-section mt-4" >
+    <img class="rounded-circle article-img" src="{{ post.author.profile.image.url }}">
+    <div class="media-body">
+      <div class="article-metadata">
+        <a class="mr-2" href="{% url 'user-posts' post.author.username %}">{{ post.author }}</a>
+        <small class="text-muted">{{ post.post_update |date:'d-m-Y f' }}</small>
+        {% if post.author == user %}
+          <div>
+            <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{% url 'post-update' post.slug %}">Update</a>
+            <a class="btn btn-danger btn-sm mt-1 mb-1" href="{% url 'post-delete' post.slug %}">Delete</a>
+            <button id="btn" class="btn btn-info btn-sm mt-1 mb-1 ">
+                 Leave Comment
+                    <i class="fas fa-comment-alt"></i>
+            </button>
+
+          </div>
+          {% else %}
+           <button id="btn" class="btn btn-info btn-sm mt-1 mb-1 ">
+                 Leave Comment
+                    <i class="fas fa-comment-alt"></i>
+            </button>
+
+        {% endif %}
+
+
+
+      </div>
+      <h4 class="article-title">{{ post.title }}</h4>
+      <p class="article-content">{{ post.content | safe}}</p>
+
+    </div>
+
+
+  </article>
+
+<!-- ********************** Comments Section******** -->
+ <div id="show-comment"  class="content-section" >
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <fieldset class="form-group">
+                <legend class="border-bottom mb-4">
+              </legend>
+                {{ comment_form|crispy }}
+            </fieldset>
+            <div class="form-group">
+                <button class="btn btn-info" type="submit">
+                  <span class="badge badge-success ">Post</span>
+
+              </button>
+            </div>
+        </form>
+
+    </div>
+
+<!-- Number Of Comments -->
+  <div class="content-section">
+   <h3 class="btn btn-secondary border-bottom">
+    Comments
+     <span class="badge badge-success ">{{comments|length}}</span>
+  </h3>
+
+<hr/>
+
+    {% for comment in comments %}
+          <article  class="media content-section mt-2" >
+              <img class="rounded-circle article-img" src="{{ comment.user_image.url }}">
+              <div class="media-body">
+                <div class="article-metadata">
+                  <a class="mr-2" href="{% url 'user-posts' post.author.username %}">{{ comment.name }}</a>
+                  <small class="text-muted">{{ comment.comment_date|date:'d-m-Y f' }}</small>
+                </div>
+                <p class="article-content">{{ comment.body }}</p>
+              </div>
+
+        </article>
+
+    {% empty %}
+       <div class="text-center mb-3 p-4 content-section">
+          <h5 class="mb-0 text-warning">No Comments !</h5>
+      </div>
+    {% endfor %}
+
+    </div>
+
+
+
+
+{% endblock content %}
+
+
+
+
+

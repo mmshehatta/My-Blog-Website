@@ -1,0 +1,33 @@
+
+ <div class="text-left">
+              <h3 class="btn bg-secondary text-light text-center ">
+                Lastest Posts
+                 <span class="badge badge-warning">{{l_posts.count}}</span>
+              </h3>
+     </div>
+
+
+ <ul class="list-group">
+     {% for post in l_posts %}
+
+    <li
+       class="list-group-item
+        list-group-item-light">
+         <a href="{% url 'post-details' post.slug %}">{{post.title}}</a>
+     </li>
+
+    {% empty %}
+     <li
+       class="list-group-item
+        list-group-item-light">
+        No Posts !
+     </li>
+
+
+    {% endfor %}
+
+
+
+
+
+    </ul>

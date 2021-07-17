@@ -1,0 +1,40 @@
+
+
+  <div class="content-section">
+            <div class="text-left">
+            <h3 class="btn  bg-secondary text-light border-bottom ">
+                Lastest Comments
+                 <span class="badge badge-warning">{{ l_comments.count}}</span>
+              </h3>
+     </div>
+
+ <ul class="list-group">
+     {% for comment in l_comments %}
+
+    <li
+       class="list-group-item
+        list-group-item-light">
+         <a href="{% url 'post-details' comment.post.slug %}">
+          {% if comment.body|length > 40 %}
+            {{comment.body|slice:'30'}} <span class="text-danger">...</span>
+          {% else %}
+          {{comment.body}}
+
+          {% endif %}
+
+       </a>
+     </li>
+
+  {% empty %}
+     <li
+       class="list-group-item
+        list-group-item-light">
+        No Comments !
+     </li>
+    {% endfor %}
+
+
+
+
+
+    </ul>

@@ -1,0 +1,232 @@
+{% load static %}
+{% load post_tag %}
+{% load comment_tag %}
+
+<!DOCTYPE html>
+<html>
+<head>
+
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS  or local -->
+    <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous"> -->
+    <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.min.css'  %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
+    <link rel="icon" href="{% static 'images/favicon.gif' %}">
+
+    {% if title %}
+        <title>My Blog - {{ title }}</title>
+    {% else %}
+        <title>My Blog</title>
+    {% endif %}
+
+
+
+<!-- ******************************************** Pushbot*********** -->
+
+
+<script>
+    //some default pre init
+    var PB = PB || {};PB.q = PB.q || [];PB.events = PB.events || [];
+
+    //PushBots ApplicationId (required)
+    PB.app_id = "60c5259bcf0add3c5249b897";
+    //Your domain name, must be HTTPS or localhost  (required)
+    PB.domain = "https://blog-web-nice2.herokuapp.com";
+    //Update and uncomment it if you are using custom safari certificate for your app
+    PB.safari_push_id = "web.com.pushbots.safaripush";
+    //****************************************
+
+    PB.logging_enabled = true;
+    PB.auto_subscribe = true;
+
+    //Custom worker and manifest URL
+    //PB.worker_url = PB.domain + "/pushbots-worker.js";
+
+    //Welcome notification message
+    PB.welcome = {title:"Welcome ",message:"Thanks for subscribing!", url :PB.domain};
+
+    function sendNotification(){
+          PB.register();
+          PB.q.push(["sendNotification", {title:"Hey ",message:"Why not?", url :"https://blog-web-nice2.herokuapp.com"}]);
+    }
+
+</script>
+
+<script src="//cdn.pushbots.com/js/sdk.min.js" type="text/javascript" onload="PB.init()" async></script>
+
+
+
+
+
+
+<!-- ***********************************************/end Push pot ********************** -->
+
+
+</head>
+<body>
+    <header class="site-header pb-3">
+      <nav class="navbar navbar-expand-md navbar-dark bg-steel fixed-top">
+      <a class="navbar-brand mr-4" href="{% url 'blog-home' %}">
+         <!-- <img src="{% static 'images/logo.png '%}" style="width:50px;border-radius: 20%"> -->
+         Blog
+      </a>
+        <div class="container">
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggle" aria-controls="navbarToggle" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarToggle">
+            <div class="navbar-nav mr-auto">
+              <a class="nav-item nav-link mr-3" href="{% url 'blog-home' %}"><i class="fas fa-home text-warning"></i> Home</a>
+
+               <ul class="navbar-nav mr-auto">
+                  <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      <i class="fas fa-place-of-worship text-warning"></i> My Projects
+                    </a>
+                    <div class="dropdown-menu mt-3" aria-labelledby="navbarDropdown">
+                      <a class="dropdown-item" href="https://emp-app.netlify.app/">Emp-Manage-App</a>
+                      <a class="dropdown-item" href="https://my-nice-blogger.herokuapp.com/">My-Blog</a>
+                      <div class="dropdown-divider"></div>
+                      <a class="dropdown-item" href="#">Something else here</a>
+                    </div>
+                  </li>
+             </ul>
+
+              <a class="nav-item nav-link mr-3" href="{% url 'blog-about' %}"> <i class="far fa-address-card text-warning"></i> About Me</a>
+
+
+            </div>
+            <!-- Navbar Right Side -->
+            <div class="navbar-nav">
+              {% if user.is_authenticated %}
+                  {% if request.user.username == 'admin' %}
+                  <a class="nav-item nav-link btn btn-info mr-2" href="https://my-nice-blogger.herokuapp.com/admin/">Admin Dashbord</a>
+                  {% endif %}
+            </div>
+                <a class="nav-item nav-link btn btn-success" href="{% url 'post-create' %}">+New Post</a>
+                <a class="nav-item nav-link text-light" href="{% url 'profile' %}"> <i class="fas fa-user-alt text-warning"></i> Hi, {{request.user.username}}</a>
+                <a class="nav-item nav-link text-light" href="{% url 'logout' %}">Logout</a>
+              {% else %}
+                <a class="nav-item nav-link" href="{% url 'login' %}">Login</a>
+                <a class="nav-item nav-link" href="{% url 'register' %}">Register</a>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+    <main role="main" class="container">
+      <div class="row">
+        <div class="col-md-8">
+          {% if messages %}
+            {% for message in messages %}
+              <div class="alert alert-{{ message.tags }}">
+                {{ message }}
+              </div>
+            {% endfor %}
+          {% endif %}
+          {% block content %}{% endblock %}
+        </div>
+        <div class="col-md-4">
+          <!-- Last Posts -->
+          <div class="content-section mt-4">
+
+            {% latest_posts %}
+
+         </div>
+          <!-- Last Comments -->
+              {%  latest_comments %}
+
+          </div>
+
+        </div>
+      </div>
+    </main>
+
+    <footer class="bg-steel">
+
+      <div class="" style="margin-top:4rem">
+          <!-- <div class="row">
+              <div class="col-md">
+                <div class="card-group mt-3 "> -->
+                  <!-- Card 1 -->
+                  <!-- <div class="card m-3">
+                        <h3 class="card-title test-center border-bottom p-2 m-3">
+                          Who I,m ?
+                        </h3>
+                        <div class="card-body">
+                          <div class="text-center">
+                              <img src="{% static 'images/logo.png' %}" style="width: 100px" alt="Who I,m ?">
+
+                          </div>
+                          Who I,m Test Test
+                          Who I,m Test Test
+                          Who I,m Test Test
+                          Who I,m Test Test
+                        </div>
+                  </div> -->
+
+                  <!-- Card 2  -->
+                   <!-- <div class="card m-3">
+                        <h3 class="card-title test-center border-bottom p-2 m-3">
+                          Important Websites
+                        </h3>
+                        <div class="card-body">
+                          <ul>
+                            <li> <a href="">site 1</a>  </li>
+                            <li> <a href="">site 2</a>   </li>
+                            <li> <a href="">site 3</a>  </li>
+                            <li> <a href="">site 4</a> </li>
+
+                          </ul>
+                        </div>
+                  </div> -->
+
+                   <!-- Card 3  -->
+                   <!-- <div class="card m-3">
+                        <h3 class="card-title test-center border-bottom p-2 m-3">
+                            Social Media Links
+                        </h3>
+                        <h4 class="card-body text-center">
+
+                             <a href="" class="text-secondary"> <i class="fab fa-facebook"></i> </a>
+                             <a href="" class="text-secondary"><i class="fab fa-twitter"></i> </a>
+                             <a href="" class="text-secondary"> <i class="fab fa-instagram"></i> </a>
+                             <a href="" class="text-secondary"> <i class="fab fa-linkedin"></i> </a>
+                             <a href="" class="text-secondary"> <i class="fab fa-youtube"></i> </a>
+
+
+                        </h4>
+                  </div> -->
+                <!-- </div> -->
+              <!-- </div> -->
+           <!-- </div> -->
+            <!-- Rights -->
+            <div class="row p-5">
+                  <div class="col-md text-center">
+                      <small class="text-light"> All Rights Reserved &copy; To Mahmoud Shehata </small>
+                  </div>
+            </div>
+
+          </div>
+
+    </footer>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <!-- <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script> -->
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script> -->
+    <!-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script> -->
+
+    <!-- local scripts -->
+    <script type="text/javascript" src="{% static 'js/jquery-3.5.1.slim.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/popper.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/bootstrap.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/fontawsome-all.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/project.js' %} "></script>
+
+</body>
+</html>
